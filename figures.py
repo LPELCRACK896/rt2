@@ -1,4 +1,4 @@
-import numpy as np
+import lpmath as lpm
 
 WHITE = (1,1,1)
 BLACK = (0,0,0)
@@ -30,9 +30,9 @@ class Sphere(object):
         self.material = material
 
     def ray_intersect(self, orig, dir):
-        L = np.subtract(self.center, orig)
-        tca = np.dot(L, dir)
-        d = (np.linalg.norm(L) ** 2 - tca ** 2) ** 0.5
+        L = lpm.suma_o_resta_vectores(self.center, orig, True)
+        tca = lpm.productoPunto(L, dir)
+        d = (lpm.magnitud_vector(L) ** 2 - tca ** 2) ** 0.5
 
         if d > self.radius:
             return None
@@ -48,9 +48,9 @@ class Sphere(object):
             return None
         
         # P = O + t0 * D
-        P = np.add(orig, t0 * np.array(dir))
-        normal = np.subtract(P, self.center)
-        normal = normal / np.linalg.norm(normal)
+        P = lpm.suma_o_resta_vectores(orig, [t0 * d for d in dir])
+        normal = lpm.suma_o_resta_vectores(P, self.center, True)
+        normal = lpm.normalizaVector(normal)
 
         return Intersect(distance = t0,
                          point = P,
