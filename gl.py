@@ -147,7 +147,7 @@ class Raytracer(object):
             for light in self.lights:
                 specColor = lpm.suma_o_resta_vectores(specColor, light.getSpecColor(intersect, self))
 
-            finalColor = reflectColor + specColor
+            finalColor = [a+b for a, b in zip(reflectColor, specColor)]
         
         elif material.matType == TRANSPARENT:
             outside = lpm.productoPunto(dir, intersect.normal) < 0 
