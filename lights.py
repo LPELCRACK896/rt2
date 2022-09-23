@@ -163,7 +163,7 @@ class AmbientLight(object):
         self.lightType = AMBIENT_LIGHT
 
     def getDiffuseColor(self, intersect, raytracer):
-        return [self.color * i for i in self.intensity]
+        return [self.intensity * i for i in self.color]
 
     def getSpecColor(self, intersect, raytracer):
         return [0,0,0]

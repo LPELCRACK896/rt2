@@ -1,3 +1,4 @@
+from calendar import TextCalendar
 import struct
 from collections import namedtuple
 import lpmath as lpm
@@ -123,19 +124,18 @@ class Raytracer(object):
                         self.clearColor[2] / 255)
 
         material = intersect.sceneObj.material
-
-        finalColor = [0,0,0]
+        finalColor = [0, 0, 0]
         objectColor = [material.diffuse[0],
                                 material.diffuse[1],
                                 material.diffuse[2]]
-
+        
         if material.matType == OPAQUE:
             for light in self.lights:
                 diffuseColor = light.getDiffuseColor(intersect, self)
                 specColor = light.getSpecColor(intersect, self)
                 shadowIntensity = light.getShadowIntensity(intersect, self)
 
-                lightColor = (diffuseColor + specColor) * (1 - shadowIntensity)
+                lightColor = [(1 - shadowIntensity)*(df+sC)for df, sC in zip(diffuseColor, specColor)]
 
                 finalColor = lpm.suma_o_resta_vectores(finalColor, lightColor)
 
@@ -173,6 +173,10 @@ class Raytracer(object):
             finalColor =  lpm.suma_o_resta_vectores(lpm.suma_o_resta_vectores([rc * kr for rc in reflectColor], [rc2 * (1-kr) for rc2 in refractColor]), specColor)
             
         finalColor = [oC*fC for oC, fC in zip(objectColor, finalColor)]
+
+        if material.texture and intersect.textCoords:
+            texColor = material.texture.getColor(intersect.textCoords[0], intersect.textCoords[1])
+            finalColor = texColor
 
         r = min(1, finalColor[0])
         g = min(1, finalColor[1])

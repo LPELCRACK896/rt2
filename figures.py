@@ -1,5 +1,6 @@
 import lpmath as lpm
-
+import numpy as np
+from math import pi
 WHITE = (1,1,1)
 BLACK = (0,0,0)
 
@@ -9,18 +10,20 @@ TRANSPARENT = 2
 
 
 class Intersect(object):
-    def __init__(self, distance, point, normal, sceneObj):
+    def __init__(self, distance, point, normal, sceneObj, textCoords):
         self.distance = distance
         self.point = point
         self.normal = normal
         self.sceneObj = sceneObj
+        self.textCoords = textCoords
 
 class Material(object):
-    def __init__(self, diffuse = WHITE, spec = 1.0, ior = 1.0, matType = OPAQUE):
+    def __init__(self, diffuse = WHITE, spec = 1.0, ior = 1.0, matType = OPAQUE, texture = None):
         self.diffuse = diffuse
         self.spec = spec
         self.ior = ior
         self.matType = matType
+        self.texture = texture
 
 
 class Sphere(object):
@@ -52,7 +55,11 @@ class Sphere(object):
         normal = lpm.suma_o_resta_vectores(P, self.center, True)
         normal = lpm.normalizaVector(normal)
 
+        u = np.arctan2(normal[2], normal[0])/ (2 * pi) + 0.5
+        v = np.arccos(-normal[1])/pi
+        uvs  = (u, v)
         return Intersect(distance = t0,
                          point = P,
                          normal = normal,
-                         sceneObj = self)
+                         sceneObj = self,
+                         textCoords=uvs)
